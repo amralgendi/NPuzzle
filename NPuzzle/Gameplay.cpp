@@ -13,6 +13,7 @@ Gameplay::Gameplay(std::shared_ptr<Context>& context, int _puzzleSize) :m_contex
 Gameplay::~Gameplay() {}
 
 void Gameplay::init() {
+	m_context->m_assets->addTexture(100, "assets\\images\\imagepuzzle.png", true);
 	m_context->m_assets->addFont(MAIN_FONT, "assets\\fonts\\Pacifico-Regular.ttf");
 
 	m_title.setFont(m_context->m_assets->getFont(MAIN_FONT));
@@ -33,9 +34,6 @@ void Gameplay::init() {
 	int size = 400;
 	int spriteSize = size / puzzleSize;
 
-	sf::Texture t;
-
-	std::cout << t.loadFromFile("assets\\images\\imagepuzzle.png");
 
 	imagePieces = new sf::Sprite[puzzleSize];
 
@@ -44,20 +42,22 @@ void Gameplay::init() {
 	//	(i % puzzleSize) * puzzleSize
 	//}
 
-	imagePieces[0].setTexture(t);
+	imagePieces[0].setTexture(m_context->m_assets->getTexture(100));
 	//imagePieces[0].setTextureRect(sf::IntRect(0 * spriteSize, 0 * spriteSize, spriteSize, spriteSize));
-	imagePieces[0].setOrigin(5, 5);
+	//imagePieces[0].setOrigin(5, 5);
 
-	/*int n = 0;
+	int n = 0;
+
 	for (int i = 0; i < puzzleSize; i++) {
 
 		for (int j = 0; j < puzzleSize; j++) {
 			
-			imagePieces[n].setTexture(t);
+			imagePieces[n].setTexture(m_context->m_assets->getTexture(100));
 			imagePieces[n].setTextureRect(sf::IntRect(i * spriteSize, j * spriteSize, spriteSize, spriteSize));
 			n++;
 		}
-	}*/
+	}
+	std::cout << n;
 
 }
 void Gameplay::processInput() {
@@ -104,13 +104,13 @@ void Gameplay::draw() {
 	m_context->m_window->draw(m_stepNumText);
 	m_context->m_window->draw(m_title);
 	m_context->m_window->draw(board);
-	m_context->m_window->draw(imagePieces[0]);
+	m_context->m_window->draw(imagePieces[2]);
 
-	std::cout << imagePieces[0].getOrigin().x;
+	//std::cout << imagePieces[0].getOrigin().x;
 	
-	/*for (int i = 0; i < puzzleSize * puzzleSize; i++) {
-		m_context->m_window->draw(imagePieces[i]);
-	}*/
+	//for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+	//	m_context->m_window->draw(imagePieces[0]);
+	//}
 
 
 
