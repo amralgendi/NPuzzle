@@ -1,11 +1,11 @@
 #include "Game.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 
-#include "MainMenu.hpp"
+#include "Gameplay.hpp"
 
 Game::Game():m_context(std::make_shared<Context>()) {
-	m_context->m_window->create(sf::VideoMode(500, 500), "SFML works!") ;
-    m_context->m_states->add(std::make_unique<MainMenu>(m_context));
+	m_context->m_window->create(sf::VideoMode(1000, 1000), "SFML works!") ;
+    m_context->m_states->add(std::make_unique<Gameplay>(m_context));
 }
 
 Game::~Game() {

@@ -20,7 +20,8 @@ struct Context {
 };
 
 enum AssetID {
-	MAIN_FONT = 0
+	MAIN_FONT = 0,
+	IMAGE = 1
 };
 
 class Game {

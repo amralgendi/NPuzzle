@@ -42,6 +42,8 @@ private:
 	int selectedDifficulty;
 
 	std::map<int, std::string> difficulties;
+	std::map<int, int> puzzleSize;
+
 
 
 	bool isLeftBtnSelected;

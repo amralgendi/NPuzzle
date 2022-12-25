@@ -3,6 +3,7 @@
 
 Engine::StateMan::StateMan() : m_add(false), m_replace(false), m_remove(false)
 {
+
 }
 
 Engine::StateMan::~StateMan() {
