@@ -1,5 +1,6 @@
 #include <SFML/Window/Event.hpp>
 #include "MainMenu.hpp"
+#include "GameSettings.hpp"
 
 MainMenu::MainMenu(std::shared_ptr<Context>& context):m_context(context),isPlayBtnSelected(true ), isExitBtnSelected(false), isPlayBtnPressed(false), isExitBtnPressed(false) {}
 
@@ -50,7 +51,8 @@ void MainMenu::processInput() {
 				break;
 			}
 			case sf::Keyboard::Enter: {
-				
+				if (isPlayBtnSelected)isPlayBtnPressed = true;
+				else isExitBtnPressed = true;
 				break;
 			}
 			default:
@@ -60,8 +62,13 @@ void MainMenu::processInput() {
 	}
 }
 void MainMenu::update(sf::Time) {
+
+	if (isPlayBtnPressed) {
+		m_context->m_states->add(std::make_unique<GameSettings>(m_context));
+	}
 	m_playBtn.setFillColor(isPlayBtnSelected ? sf::Color::Yellow : sf::Color::White);
 	m_exitBtn.setFillColor(isExitBtnSelected ? sf::Color::Yellow : sf::Color::White);
+
 
 }
 void MainMenu::draw() {

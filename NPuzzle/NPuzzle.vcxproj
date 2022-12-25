@@ -23,6 +23,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="GameSettings.cpp" />
+    <ClCompile Include="ImagePicker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="State.cpp" />
@@ -33,6 +34,7 @@
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameSettings.hpp" />
     <ClInclude Include="Gameplay.hpp" />
+    <ClInclude Include="ImagePicker.hpp" />
     <ClInclude Include="MainMenu.hpp" />
     <ClInclude Include="State.hpp" />
     <ClInclude Include="StateMan.hpp" />

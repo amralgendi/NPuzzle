@@ -5,59 +5,83 @@
 
 
 Gameplay::Gameplay(std::shared_ptr<Context>& context, int _puzzleSize) :m_context(context), stepNum(0), puzzleSize(_puzzleSize) {
-
-	
-
+	imagePieces = new sf::Sprite[puzzleSize * puzzleSize];
 }
 
 Gameplay::~Gameplay() {}
 
 void Gameplay::init() {
-	m_context->m_assets->addTexture(100, "assets\\images\\imagepuzzle.png", true);
+	m_context->m_assets->addTexture(IMAGE_PUZZLE, "assets\\images\\imagepuzzle.png", true);
 	m_context->m_assets->addFont(MAIN_FONT, "assets\\fonts\\Pacifico-Regular.ttf");
 
 	m_title.setFont(m_context->m_assets->getFont(MAIN_FONT));
 	m_title.setString("Start");
 	m_title.setOrigin(m_title.getLocalBounds().width / 2, m_title.getLocalBounds().height / 2);
-	m_title.setPosition(m_context->m_window->getSize().x / 3.f, m_context->m_window->getSize().y / 6.f);
+	m_title.setPosition(m_context->m_window->getSize().x / 3.f, 50);
 
 	m_stepNumText.setFont(m_context->m_assets->getFont(MAIN_FONT));
 	m_stepNumText.setString(std::to_string(stepNum));
 	m_stepNumText.setOrigin(m_stepNumText.getLocalBounds().width / 2, m_stepNumText.getLocalBounds().height / 2);
-	m_stepNumText.setPosition(m_context->m_window->getSize().x / 1.5, m_context->m_window->getSize().y / 6.f);
+	m_stepNumText.setPosition(m_context->m_window->getSize().x / 1.5, 50);
 
-	board.setSize(sf::Vector2f(500, 500));
-	board.setOrigin(250, 250);
+	board.setSize(sf::Vector2f(750, 750));
+	board.setOrigin(375, 375);
 	board.setPosition(m_context->m_window->getSize().x / 2.f, m_context->m_window->getSize().y / 2.f);
 	board.setFillColor(sf::Color::White);
-	
+
+	int textureSize = m_context->m_assets->getTexture(IMAGE_PUZZLE).getSize().x;
+
+
+	std::cout << textureSize;
 	int size = 400;
-	int spriteSize = size / puzzleSize;
-
-
-	imagePieces = new sf::Sprite[puzzleSize];
+	int spriteSize = textureSize / puzzleSize;
 
 
 	//for (int i = 0; i < puzzleSize * puzzleSize - 1; i++) {
 	//	(i % puzzleSize) * puzzleSize
 	//}
 
-	imagePieces[0].setTexture(m_context->m_assets->getTexture(100));
+	//imagePieces[0].setTexture(m_context->m_assets->getTexture(IMAGE_PUZZLE));
 	//imagePieces[0].setTextureRect(sf::IntRect(0 * spriteSize, 0 * spriteSize, spriteSize, spriteSize));
 	//imagePieces[0].setOrigin(5, 5);
 
+	int arr[4][4] = {
+		{2, 5, 7, 9},
+		{1, 4, 8, 10},
+		{6, 0, 3, 11},
+		{13, 12, 14, 15}
+	};
+
 	int n = 0;
 
-	for (int i = 0; i < puzzleSize; i++) {
+	float scalingFactor = 750.f / textureSize;
 
+	std::cout << scalingFactor;
+
+	for (int i = 0; i < puzzleSize; i++) {
 		for (int j = 0; j < puzzleSize; j++) {
-			
-			imagePieces[n].setTexture(m_context->m_assets->getTexture(100));
+			imagePieces[n].setTexture(m_context->m_assets->getTexture(IMAGE_PUZZLE));
 			imagePieces[n].setTextureRect(sf::IntRect(i * spriteSize, j * spriteSize, spriteSize, spriteSize));
+			imagePieces[n].setScale(scalingFactor, scalingFactor);
 			n++;
 		}
 	}
-	std::cout << n;
+	for (int i = 0; i < puzzleSize; i++) {
+
+		for (int j = 0; j < puzzleSize; j++) {
+
+			imagePieces[arr[i][j]].setPosition(i * spriteSize * scalingFactor + 125, j * spriteSize * scalingFactor + 125);
+
+		}
+	}
+
+	
+
+	//std::cout << n;
+	/*for (int i = 0; i < n ; i++) {
+		std::cout << i;
+		imagePieces[i].setPosition(500, 500);
+	}*/
 
 }
 void Gameplay::processInput() {
@@ -104,13 +128,13 @@ void Gameplay::draw() {
 	m_context->m_window->draw(m_stepNumText);
 	m_context->m_window->draw(m_title);
 	m_context->m_window->draw(board);
-	m_context->m_window->draw(imagePieces[2]);
+	//m_context->m_window->draw(imagePieces[0]);
 
 	//std::cout << imagePieces[0].getOrigin().x;
 	
-	//for (int i = 0; i < puzzleSize * puzzleSize; i++) {
-	//	m_context->m_window->draw(imagePieces[0]);
-	//}
+	for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+		m_context->m_window->draw(imagePieces[i]);
+	}
 
 
 

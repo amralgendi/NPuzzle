@@ -21,7 +21,7 @@ struct Context {
 
 enum AssetID {
 	MAIN_FONT = 0,
-	IMAGE = 1
+	IMAGE_PUZZLE = 1
 };
 
 class Game {
