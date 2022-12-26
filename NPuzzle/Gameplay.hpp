@@ -75,7 +75,8 @@ private:
 	int imageIndexToMove;
 	KEYS keyPressed;
 	int maxMove = -1;
-	int amountMoved = 0;
+	float amountMoved = 0.f;
+	float animationSpeed = 3.f;
 
 
 };

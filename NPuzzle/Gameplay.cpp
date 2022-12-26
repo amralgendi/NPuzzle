@@ -169,10 +169,15 @@ void Gameplay::update(sf::Time) {
 	else {
 		std::cout << imageIndexToMove << ' ' << keyPressed << '\n';
 		if (amountMoved < spriteSize * scalingFactor)
+
 		{
-			amountMoved++;;
-			float newX = imagePieces[imageIndexToMove].getPosition().x + X_MOVING[keyPressed];
-			float newY = imagePieces[imageIndexToMove].getPosition().y + Y_MOVING[keyPressed];
+
+			float currAmount = amountMoved + animationSpeed < spriteSize* scalingFactor ? animationSpeed : spriteSize * scalingFactor - amountMoved;
+			amountMoved += animationSpeed;
+
+			
+			float newX = imagePieces[imageIndexToMove].getPosition().x + X_MOVING[keyPressed] * currAmount;
+			float newY = imagePieces[imageIndexToMove].getPosition().y + Y_MOVING[keyPressed] * currAmount;
 
 			
 
