@@ -13,6 +13,10 @@
 #include "State.hpp"
 #include "Game.hpp"
 
+enum KEYS{
+	UP, DOWN, LEFT, RIGHT
+};
+
 
 
 
@@ -27,7 +31,26 @@ public:
 	void draw() override;
 
 
+
 private:
+
+	void FindLocationOf(int** state, int item, int size, int& x, int& y) {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (state[i][j] == item) {
+					x = i;
+					y = j;
+					return;
+				}
+			}
+		}
+	}
+
+	void FindEmptyLocation(int** state, int size, int& x, int& y) {
+		return FindLocationOf(state, size * size - 1,size, x, y);
+	}
+	
+
 	std::shared_ptr<Context> m_context;
 	sf::Text m_title;
 	sf::Text m_stepNumText;
@@ -36,10 +59,20 @@ private:
 
 	int puzzleSize;
 
+	int** puzzleState;
+
 
 	sf::Sprite* imagePieces;
 
 	int stepNum;
 	std::string imagePath;
+
+	bool animationStarted = false;
+	int imageIndexToMove;
+	KEYS keyPressed;
+	int maxMove = -1;
+	int amountMoved = 0;
+
+	int selectedIndex = 0;
 
 };
