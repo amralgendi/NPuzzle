@@ -1,6 +1,7 @@
 #include <SFML/Window/Event.hpp>
 #include "Gameplay.hpp"
 #include "ImagePicker.hpp"
+#include "YouWonMenu.hpp"
 #include <string>
 #include <iostream>
 
@@ -11,6 +12,7 @@ Gameplay::Gameplay(std::shared_ptr<Context>& context, std::string _imagePath, in
 
 Gameplay::~Gameplay() {}
 
+int** finalPuzzleState;
 void Gameplay::init() {
 	m_context->m_assets->addTexture(IMAGE_PUZZLE, imagePath, true);
 	m_context->m_assets->addTexture(1025, "assets\\images\\solve.png", true);
@@ -52,17 +54,15 @@ void Gameplay::init() {
 	puzzleState = new int* [puzzleSize];
 	for (int i = 0; i < puzzleSize; i++)puzzleState[i] = new int[puzzleSize];
 
+	finalPuzzleState = new int* [puzzleSize];
+	for (int i = 0; i < puzzleSize; i++)finalPuzzleState[i] = new int[puzzleSize];
 
-	int arr[4][4] = {
-		{0, 1, 2, 3},
-		{4, 5, 6, 15},
-		{8, 9, 10, 7},
-		{12, 13, 14, 11}
-	};
+
 	int n1 = 0;
 	for (int i = 0; i < puzzleSize; i++) {
 		for (int j = 0; j < puzzleSize; j++) {
 			puzzleState[i][j] = n1;
+			finalPuzzleState[i][j] = n1;
 			n1++;
 		}
 
@@ -156,6 +156,7 @@ void Gameplay::solveYalla() {
 }
 bool lock_click2;
 bool lock_click3;
+bool firstMove = true;
 void Gameplay::processInput() {
 	sf::Event event;
 
@@ -217,6 +218,8 @@ void Gameplay::processInput() {
 		if (currentlySolving) { return; }
 		if (event.type == sf::Event::KeyPressed) {
 			if (animationStarted ) return;
+
+			
 			int emptyX, emptyY;
 			FindEmptyLocation(puzzleState, puzzleSize, emptyX, emptyY);
 			std::cout << emptyX << ' ' << emptyY << "Check \n";
@@ -260,6 +263,23 @@ void Gameplay::processInput() {
 
 				stepNum++;
 				animationStarted = true;
+
+				if (!firstMove) {
+					int count = 0;
+					for (int i = 0; i < puzzleSize; i++)
+						for (int j = 0; j < puzzleSize; j++)
+							if (puzzleState[i][j] && puzzleState[i][j] != finalPuzzleState[i][j])
+								count++;
+
+					if (count == 0) {
+						// Solved
+
+						m_context->m_states->add(std::make_unique<YouWonMenu>(m_context));
+					}
+				}
+
+				firstMove = false;
+
 			}
 		}
 	}
@@ -338,6 +358,8 @@ void Gameplay::update(sf::Time) {
 			amountMoved = 0;
 		}
 	}
+
+
 
 }
 void Gameplay::draw() {

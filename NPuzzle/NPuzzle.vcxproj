@@ -30,6 +30,7 @@
     <ClCompile Include="PuzzleState.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateMan.cpp" />
+    <ClCompile Include="YouWonMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetMan.hpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="PuzzleState.hpp" />
     <ClInclude Include="State.hpp" />
     <ClInclude Include="StateMan.hpp" />
+    <ClInclude Include="YouWonMenu.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
