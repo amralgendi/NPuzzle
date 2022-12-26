@@ -116,6 +116,7 @@ void MainMenu::update(sf::Time) {
 	if (isPlayBtnPressed) {
 		m_context->m_states->add(std::make_unique<ImagePicker>(m_context, puzzleSize[selectedDifficulty]));
 	}
+	else if(isExitBtnPressed)m_context->m_window->close();
 	m_playBtnBG.setOutlineColor(isPlayBtnSelected ? sf::Color::White : sf::Color{ 239, 65, 124 });
 	m_exitBtnnBG.setOutlineColor(isExitBtnSelected ? sf::Color::White : sf::Color{ 239, 65, 124 });
 

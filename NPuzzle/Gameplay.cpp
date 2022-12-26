@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-Gameplay::Gameplay(std::shared_ptr<Context>& context, std::string _imagePath ,int _puzzleSize) :m_context(context), stepNum(0), imagePath(_imagePath), puzzleSize(_puzzleSize) {
+Gameplay::Gameplay(std::shared_ptr<Context>& context, std::string _imagePath, int _puzzleSize) :keyPressed(NONE), m_context(context), stepNum(0), imagePath(_imagePath), puzzleSize(_puzzleSize) {
 	imagePieces = new sf::Sprite[puzzleSize * puzzleSize];
 }
 
@@ -47,8 +47,8 @@ void Gameplay::init() {
 	//imagePieces[0].setTextureRect(sf::IntRect(0 * spriteSize, 0 * spriteSize, spriteSize, spriteSize));
 	//imagePieces[0].setOrigin(5, 5);
 	puzzleState = new int* [puzzleSize];
-	for (int i = 0; i < puzzleSize; i++)puzzleState[i] = new int [puzzleSize];
-	
+	for (int i = 0; i < puzzleSize; i++)puzzleState[i] = new int[puzzleSize];
+
 
 	int arr[4][4] = {
 		{0, 1, 2, 3},
@@ -56,9 +56,13 @@ void Gameplay::init() {
 		{8, 9, 10, 7},
 		{12, 13, 14, 11}
 	};
-
+	int n1 = 0;
 	for (int i = 0; i < puzzleSize; i++) {
-		for (int j = 0; j < puzzleSize; j++) puzzleState[i][j] = arr[i][j];
+		for (int j = 0; j < puzzleSize; j++) {
+			puzzleState[i][j] = n1;
+			n1++;
+		}
+
 	}
 
 	int n = 0;
@@ -74,14 +78,14 @@ void Gameplay::init() {
 			std::cout << i << ' ' << j << ' ' << i * spriteSize << ' ' << j * spriteSize << '\n';
 
 			imagePieces[n].setTexture(m_context->m_assets->getTexture(IMAGE_PUZZLE));
-			imagePieces[n].setTextureRect(sf::IntRect(j * spriteSize, i* spriteSize, spriteSize, spriteSize));
+			imagePieces[n].setTextureRect(sf::IntRect(j * spriteSize, i * spriteSize, spriteSize, spriteSize));
 			imagePieces[n].setScale(scalingFactor, scalingFactor);
 			n++;
 		}
 	}
 
 
-	
+
 
 	//std::cout << n;
 	/*for (int i = 0; i < n ; i++) {
@@ -99,115 +103,84 @@ void Gameplay::processInput() {
 			m_context->m_window->close();
 
 		if (event.type == sf::Event::KeyPressed) {
+			if (animationStarted) return;
 			int emptyX, emptyY;
-			FindEmptyLocation(puzzleState,puzzleSize, emptyX, emptyY);
+			FindEmptyLocation(puzzleState, puzzleSize, emptyX, emptyY);
 			std::cout << emptyX << ' ' << emptyY << "Check \n";
 			switch (event.key.code)
 			{
 			case sf::Keyboard::Left: {
-				imageIndexToMove = puzzleState[emptyX][emptyY + 1];
-
-				int temp = puzzleState[emptyX][emptyY];
-				puzzleState[emptyX][emptyY] = puzzleState[emptyX][emptyY + 1];
-				puzzleState[emptyX][emptyY + 1] = temp;
-
 				keyPressed = LEFT;
 
-				animationStarted = true;
 				break;
 			}
 			case sf::Keyboard::Right: {
-				imageIndexToMove = puzzleState[emptyX][emptyY - 1];
-
-				int temp = puzzleState[emptyX][emptyY];
-				puzzleState[emptyX][emptyY] = puzzleState[emptyX][emptyY - 1];
-				puzzleState[emptyX][emptyY - 1] = temp;
-
 				keyPressed = RIGHT;
-
-				animationStarted = true;
 				break;
 			}
 			case sf::Keyboard::Up: {
-				imageIndexToMove = puzzleState[emptyX + 1][emptyY];
-
-				int temp = puzzleState[emptyX][emptyY];
-				puzzleState[emptyX][emptyY] = puzzleState[emptyX + 1][emptyY];
-				puzzleState[emptyX + 1][emptyY] = temp;
-
 				keyPressed = UP;
-
-				animationStarted = true;
 				break;
 			}
 			case sf::Keyboard::Down: {
-				imageIndexToMove = puzzleState[emptyX - 1][emptyY];
-
-				int temp = puzzleState[emptyX][emptyY];
-				puzzleState[emptyX][emptyY] = puzzleState[emptyX - 1][emptyY];
-				puzzleState[emptyX - 1][emptyY] = temp;
-
 				keyPressed = DOWN;
-				
-				animationStarted = true;
 				break;
 			}
 			case sf::Keyboard::Return: {
-				selectedIndex++;
 				break;
 			}
 			default:
 				break;
+			}
+			if (keyPressed != NONE) {
+				if (emptyX - Y_MOVING[keyPressed] < 0 || emptyX - Y_MOVING[keyPressed] >= puzzleSize
+					|| emptyY - X_MOVING[keyPressed] < 0 || emptyY - X_MOVING[keyPressed] >= puzzleSize) {
+					std::cout << "ERROR, CANNOT!!" << '\n';
+					return;
+				}
+				imageIndexToMove = puzzleState[emptyX - Y_MOVING[keyPressed]][emptyY - X_MOVING[keyPressed]];
+
+				int temp = puzzleState[emptyX][emptyY];
+				puzzleState[emptyX][emptyY] = puzzleState[emptyX - Y_MOVING[keyPressed]][emptyY - X_MOVING[keyPressed]];
+				puzzleState[emptyX - Y_MOVING[keyPressed]][emptyY - X_MOVING[keyPressed]] = temp;
+
+				stepNum++;
+				animationStarted = true;
 			}
 		}
 	}
 }
 void Gameplay::update(sf::Time) {
+	m_stepNumText.setString(std::to_string(stepNum));
 	int textureSize = m_context->m_assets->getTexture(IMAGE_PUZZLE).getSize().x;
 	int size = 400;
 	float spriteSize = float(textureSize) / puzzleSize;
 	float scalingFactor = 750.f / textureSize;
 
-	if(!animationStarted)
-	for (int i = 0; i < puzzleSize; i++) {
+	if (!animationStarted)
+		for (int i = 0; i < puzzleSize; i++) {
 
-		for (int j = 0; j < puzzleSize; j++) {
-			if (puzzleState[i][j] == puzzleSize * puzzleSize - 1) continue;
-			imagePieces[puzzleState[i][j]].setPosition(j * spriteSize * scalingFactor + 125, i * spriteSize * scalingFactor + 125);
+			for (int j = 0; j < puzzleSize; j++) {
+				if (puzzleState[i][j] == puzzleSize * puzzleSize - 1) continue;
+				imagePieces[puzzleState[i][j]].setPosition(j * spriteSize * scalingFactor + 125, i * spriteSize * scalingFactor + 125);
 
+			}
 		}
-	}
 	else {
 		std::cout << imageIndexToMove << ' ' << keyPressed << '\n';
-		if(amountMoved < spriteSize * scalingFactor)
+		if (amountMoved < spriteSize * scalingFactor)
 		{
 			amountMoved++;;
-			float newX = imagePieces[imageIndexToMove].getPosition().x;
-			float newY = imagePieces[imageIndexToMove].getPosition().y;
+			float newX = imagePieces[imageIndexToMove].getPosition().x + X_MOVING[keyPressed];
+			float newY = imagePieces[imageIndexToMove].getPosition().y + Y_MOVING[keyPressed];
 
-			switch (keyPressed)
-			{
-			case UP:
-				newY--;
-				break;
-			case DOWN:
-				newY++;
-				break;
-			case LEFT:
-				newX--;
-				break;
-			case RIGHT:
-				newX++;
-				break;
-			default:
-				break;
-			}
+			
 
 			imagePieces[imageIndexToMove].setPosition(newX, newY);
 		}
 		else {
 			animationStarted = false;
-
+			keyPressed = NONE;
 			amountMoved = 0;
 		}
 	}
@@ -222,8 +195,8 @@ void Gameplay::draw() {
 	//m_context->m_window->draw(imagePieces[0]);
 
 	//std::cout << imagePieces[0].getOrigin().x;
-	
-	for (int i = 0; i < puzzleSize * puzzleSize- 1 ; i++) {
+
+	for (int i = 0; i < puzzleSize * puzzleSize - 1; i++) {
 		m_context->m_window->draw(imagePieces[i]);
 	}
 	//m_context->m_window->draw(imagePieces[selectedIndex]);

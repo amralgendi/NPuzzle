@@ -13,8 +13,8 @@
 #include "State.hpp"
 #include "Game.hpp"
 
-enum KEYS{
-	UP, DOWN, LEFT, RIGHT
+enum KEYS {
+	UP, RIGHT, DOWN, LEFT, NONE
 };
 
 
@@ -22,7 +22,7 @@ enum KEYS{
 
 class Gameplay : public Engine::State {
 public:
-	Gameplay(std::shared_ptr<Context>& context, std::string _imagePath,int _puzzleSize = 3);
+	Gameplay(std::shared_ptr<Context>& context, std::string _imagePath, int _puzzleSize = 3);
 	~Gameplay();
 
 	void init() override;
@@ -33,6 +33,10 @@ public:
 
 
 private:
+
+
+	int X_MOVING[5] = { 0, 1, 0, -1, 0 } ;
+	int Y_MOVING[5] = { -1, 0, 1, 0, 0 } ;
 
 	void FindLocationOf(int** state, int item, int size, int& x, int& y) {
 		for (int i = 0; i < size; i++) {
@@ -47,9 +51,9 @@ private:
 	}
 
 	void FindEmptyLocation(int** state, int size, int& x, int& y) {
-		return FindLocationOf(state, size * size - 1,size, x, y);
+		return FindLocationOf(state, size * size - 1, size, x, y);
 	}
-	
+
 
 	std::shared_ptr<Context> m_context;
 	sf::Text m_title;
@@ -73,6 +77,5 @@ private:
 	int maxMove = -1;
 	int amountMoved = 0;
 
-	int selectedIndex = 0;
 
 };

@@ -101,6 +101,7 @@ void ImagePicker::processInput() {
 }
 void ImagePicker::update(sf::Time) {
 	if (isReady) {
+		std::cout << imagePaths[selectedImageIndex] << ' ' << puzzleSize << '\n';
 		m_context->m_states->add(std::make_unique<Gameplay>(m_context,imagePaths[selectedImageIndex], puzzleSize));
 	}
 
