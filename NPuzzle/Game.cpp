@@ -4,7 +4,7 @@
 #include "MainMenu.hpp"
 
 Game::Game():m_context(std::make_shared<Context>()) {
-	m_context->m_window->create(sf::VideoMode(1000, 1000), "n-Puzzle", (sf::Style::Titlebar | sf::Style::Close));
+	m_context->m_window->create(sf::VideoMode(1000, 1000), "n-Puzzle");
     //m_context->m_window->setFramerateLimit(60);
     m_context->m_states->add(std::make_unique<MainMenu>(m_context));
 }

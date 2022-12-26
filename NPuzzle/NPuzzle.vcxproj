@@ -25,6 +25,9 @@
     <ClCompile Include="ImagePicker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="PriorityQueue.cpp" />
+    <ClCompile Include="PuzzleSolver.cpp" />
+    <ClCompile Include="PuzzleState.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateMan.cpp" />
   </ItemGroup>
@@ -34,6 +37,9 @@
     <ClInclude Include="Gameplay.hpp" />
     <ClInclude Include="ImagePicker.hpp" />
     <ClInclude Include="MainMenu.hpp" />
+    <ClInclude Include="PriorityQueue.hpp" />
+    <ClInclude Include="PuzzleSolver.hpp" />
+    <ClInclude Include="PuzzleState.hpp" />
     <ClInclude Include="State.hpp" />
     <ClInclude Include="StateMan.hpp" />
   </ItemGroup>

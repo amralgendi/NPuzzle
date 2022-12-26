@@ -28,7 +28,7 @@ void ImagePicker::init() {
 	m_context->m_assets->addFont(MAIN_FONT, "assets\\fonts\\Pacifico-Regular.ttf");
 	m_context->m_assets->addTexture(1022, "assets\\images\\left.png", true);
 
-	m_left.setPosition(50, 110);
+	m_left.setPosition(40, 40);
 	m_left.setTexture(m_context->m_assets->getTexture(1022));
 
 	m_title.setFont(m_context->m_assets->getFont(MAIN_FONT));

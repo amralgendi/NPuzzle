@@ -66,6 +66,9 @@ private:
 	int** puzzleState;
 
 
+	sf::Sprite m_left;
+	sf::Sprite m_solveBtn;
+
 	sf::Sprite* imagePieces;
 
 	int stepNum;

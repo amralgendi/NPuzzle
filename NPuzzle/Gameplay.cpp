@@ -1,10 +1,11 @@
 #include <SFML/Window/Event.hpp>
 #include "Gameplay.hpp"
+#include "ImagePicker.hpp"
 #include <string>
 #include <iostream>
 
 
-Gameplay::Gameplay(std::shared_ptr<Context>& context, std::string _imagePath, int _puzzleSize) :keyPressed(NONE), m_context(context), stepNum(0), imagePath(_imagePath), puzzleSize(_puzzleSize) {
+Gameplay::Gameplay(std::shared_ptr<Context>& context, std::string _imagePath, int _puzzleSize) :m_context(context), stepNum(0), imagePath(_imagePath), puzzleSize(_puzzleSize) {
 	imagePieces = new sf::Sprite[puzzleSize * puzzleSize];
 }
 
@@ -12,17 +13,19 @@ Gameplay::~Gameplay() {}
 
 void Gameplay::init() {
 	m_context->m_assets->addTexture(IMAGE_PUZZLE, imagePath, true);
+	m_context->m_assets->addTexture(1025, "assets\\images\\solve.png", true);
 	m_context->m_assets->addFont(MAIN_FONT, "assets\\fonts\\Pacifico-Regular.ttf");
 
-	m_title.setFont(m_context->m_assets->getFont(MAIN_FONT));
-	m_title.setString("Start");
-	m_title.setOrigin(m_title.getLocalBounds().width / 2, m_title.getLocalBounds().height / 2);
-	m_title.setPosition(m_context->m_window->getSize().x / 3.f, 50);
+	m_left.setPosition(40, 40);
+	m_left.setTexture(m_context->m_assets->getTexture(1022));
+
+	m_solveBtn.setPosition(40, m_left.getPosition().y+m_left.getTexture()->getSize().y+20);
+	m_solveBtn.setTexture(m_context->m_assets->getTexture(1025));
 
 	m_stepNumText.setFont(m_context->m_assets->getFont(MAIN_FONT));
-	m_stepNumText.setString(std::to_string(stepNum));
+	m_stepNumText.setString("Number of moves: "+std::to_string(stepNum));
 	m_stepNumText.setOrigin(m_stepNumText.getLocalBounds().width / 2, m_stepNumText.getLocalBounds().height / 2);
-	m_stepNumText.setPosition(m_context->m_window->getSize().x / 1.5, 50);
+	m_stepNumText.setPosition(m_context->m_window->getSize().x / 2, 50);
 
 	board.setSize(sf::Vector2f(750, 750));
 	board.setOrigin(375, 375);
@@ -94,14 +97,118 @@ void Gameplay::init() {
 	}*/
 
 }
+
+#include "PuzzleSolver.hpp"
+
+template <const size_t N, size_t N2>
+/// Create a dynamic array from a statically typed array
+int** getTestCase(int(&array)[N][N2]) {
+	int** dynamicState = new int* [N];
+	for (int i = 0; i < N; ++i) {
+		dynamicState[i] = new int[N];
+	}
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++)
+			dynamicState[i][j] = array[i][j];
+	}
+
+	return dynamicState;
+}
+
+bool currentlySolving = false;
+void solveYalla() {
+	currentlySolving = true;
+	const int N = 3;
+
+	int initialMat[N][N] = {
+		{1, 2, 3},
+		{4, 5, 6},
+		{0, 7, 8}
+	};
+
+	int finalMat[N][N] = {
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0}
+	};
+
+
+	int** dynamicFirstState = getTestCase(initialMat);
+	int** dynamicFinalState = getTestCase(finalMat);
+
+	PuzzleState* initialState = new PuzzleState(0, dynamicFirstState, N, 2, 0, 2, 0, 0);
+	PuzzleState* finalState = new PuzzleState(0, dynamicFinalState, N, 2, 2, 2, 2, -1);
+
+	PuzzleState* leafNode;
+
+	solve(*initialState, *finalState, leafNode);
+
+	while (leafNode != 0) {
+		leafNode->printMatrix();
+		leafNode = leafNode->parent;
+	}
+}
+
+bool lock_click2;
+bool lock_click3;
 void Gameplay::processInput() {
 	sf::Event event;
 
 	while (m_context->m_window->pollEvent(event))
 	{
+
+		if (event.type == sf::Event::MouseButtonPressed) { //Mouse button Pressed 
+
+			sf::Vector2f mouse = m_context->m_window->mapPixelToCoords(sf::Mouse::getPosition(*(m_context->m_window)));
+
+			// retrieve the bounding box of the sprite
+			sf::FloatRect bounds = m_left.getGlobalBounds();
+
+			if (bounds.contains(mouse) && event.mouseButton.button == sf::Mouse::Left && lock_click2 != true) //specifies
+			{
+				/* your code here*/
+				m_context->m_states->add(std::make_unique<ImagePicker>(m_context));
+				lock_click2 = true; //And now, after all your code, this will lock the loop and not print "lmb" in a x held time. 
+				/* or here idk */
+			}
+		}
+
+		if (event.type == sf::Event::MouseButtonReleased) //Mouse button Released now.
+		{
+			if (event.mouseButton.button == sf::Mouse::Left) //specifies the held button       again. (You can make a variable for that if you want)
+			{
+				lock_click2 = false; //unlock when the button has been released.
+			}
+		}
+
+		if (event.type == sf::Event::MouseButtonPressed) { //Mouse button Pressed 
+
+			sf::Vector2f mouse = m_context->m_window->mapPixelToCoords(sf::Mouse::getPosition(*(m_context->m_window)));
+
+			// retrieve the bounding box of the sprite
+			sf::FloatRect bounds = m_solveBtn.getGlobalBounds();
+
+			if (bounds.contains(mouse) && event.mouseButton.button == sf::Mouse::Left && lock_click3 != true) //specifies
+			{
+				solveYalla();
+				lock_click3 = true; //And now, after all your code, this will lock the loop and not print "lmb" in a x held time. 
+				/* or here idk */
+			}
+		}
+
+		if (event.type == sf::Event::MouseButtonReleased) //Mouse button Released now.
+		{
+			if (event.mouseButton.button == sf::Mouse::Left) //specifies the held button       again. (You can make a variable for that if you want)
+			{
+				lock_click3 = false; //unlock when the button has been released.
+			}
+		}
+
 		if (event.type == sf::Event::Closed)
 			m_context->m_window->close();
 
+		if (currentlySolving) { return; }
 		if (event.type == sf::Event::KeyPressed) {
 			if (animationStarted) return;
 			int emptyX, emptyY;
@@ -124,6 +231,8 @@ void Gameplay::processInput() {
 			}
 			case sf::Keyboard::Down: {
 				keyPressed = DOWN;
+				
+				animationStarted = true;
 				break;
 			}
 			case sf::Keyboard::Return: {
@@ -151,7 +260,11 @@ void Gameplay::processInput() {
 	}
 }
 void Gameplay::update(sf::Time) {
-	m_stepNumText.setString(std::to_string(stepNum));
+
+	m_stepNumText.setString("Number of moves: " + std::to_string(stepNum));
+	m_stepNumText.setOrigin(m_stepNumText.getLocalBounds().width / 2, m_stepNumText.getLocalBounds().height / 2);
+	m_stepNumText.setPosition(m_context->m_window->getSize().x / 2, 50);
+
 	int textureSize = m_context->m_assets->getTexture(IMAGE_PUZZLE).getSize().x;
 	int size = 400;
 	float spriteSize = float(textureSize) / puzzleSize;
@@ -193,8 +306,10 @@ void Gameplay::update(sf::Time) {
 }
 void Gameplay::draw() {
 
-	m_context->m_window->clear(sf::Color::Blue);
+	m_context->m_window->clear(sf::Color{ 19, 26, 64 });
 	m_context->m_window->draw(m_stepNumText);
+	m_context->m_window->draw(m_left);
+	m_context->m_window->draw(m_solveBtn);
 	m_context->m_window->draw(m_title);
 	m_context->m_window->draw(board);
 	//m_context->m_window->draw(imagePieces[0]);
