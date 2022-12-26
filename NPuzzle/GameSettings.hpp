@@ -44,6 +44,8 @@ private:
 	std::map<int, std::string> difficulties;
 	std::map<int, int> puzzleSize;
 
+	bool isReady;
+
 
 
 	bool isLeftBtnSelected;

@@ -18,7 +18,7 @@
 
 class Gameplay : public Engine::State {
 public:
-	Gameplay(std::shared_ptr<Context>& context, int _puzzleSize = 3);
+	Gameplay(std::shared_ptr<Context>& context, std::string _imagePath,int _puzzleSize = 3);
 	~Gameplay();
 
 	void init() override;
@@ -40,5 +40,6 @@ private:
 	sf::Sprite* imagePieces;
 
 	int stepNum;
+	std::string imagePath;
 
 };

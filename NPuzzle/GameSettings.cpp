@@ -1,8 +1,9 @@
 #include <SFML/Window/Event.hpp>
 #include "GameSettings.hpp"
+#include "ImagePicker.hpp"
 
 
-GameSettings::GameSettings(std::shared_ptr<Context>& context) :m_context(context), isRightBtnSelected(false), isLeftBtnSelected(false), isRightBtnPressed(false), isLeftBtnPressed(false), selectedDifficulty(MEDIUM){
+GameSettings::GameSettings(std::shared_ptr<Context>& context) :m_context(context), isReady(false), isRightBtnSelected(false), isLeftBtnSelected(false), isRightBtnPressed(false), isLeftBtnPressed(false), selectedDifficulty(MEDIUM) {
 	difficulties[EASY] = "Easy 3x3";
 	difficulties[MEDIUM] = "Medium 4x4";
 	difficulties[HARD] = "Hard 5x5";
@@ -64,6 +65,10 @@ void GameSettings::processInput() {
 				selectedDifficulty--;
 				break;
 			}
+			case sf::Keyboard::Return: {
+				isReady = true;
+				break;
+			}
 			default:
 				break;
 			}
@@ -71,6 +76,10 @@ void GameSettings::processInput() {
 	}
 }
 void GameSettings::update(sf::Time) {
+	if (isReady) {
+		m_context->m_states->add(std::make_unique<ImagePicker>(m_context, puzzleSize[selectedDifficulty]));
+	}
+
 	/*m_playBtn.setFillColor(isPlayBtnSelected ? sf::Color::Yellow : sf::Color::White);
 	m_exitBtn.setFillColor(isExitBtnSelected ? sf::Color::Yellow : sf::Color::White);*/
 	m_difficultyText.setString(difficulties[selectedDifficulty]);

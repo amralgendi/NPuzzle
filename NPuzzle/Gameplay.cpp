@@ -4,14 +4,14 @@
 #include <iostream>
 
 
-Gameplay::Gameplay(std::shared_ptr<Context>& context, int _puzzleSize) :m_context(context), stepNum(0), puzzleSize(_puzzleSize) {
+Gameplay::Gameplay(std::shared_ptr<Context>& context, std::string _imagePath ,int _puzzleSize) :m_context(context), stepNum(0), imagePath(_imagePath), puzzleSize(_puzzleSize) {
 	imagePieces = new sf::Sprite[puzzleSize * puzzleSize];
 }
 
 Gameplay::~Gameplay() {}
 
 void Gameplay::init() {
-	m_context->m_assets->addTexture(IMAGE_PUZZLE, "assets\\images\\imagepuzzle.png", true);
+	m_context->m_assets->addTexture(IMAGE_PUZZLE, imagePath, true);
 	m_context->m_assets->addFont(MAIN_FONT, "assets\\fonts\\Pacifico-Regular.ttf");
 
 	m_title.setFont(m_context->m_assets->getFont(MAIN_FONT));
@@ -46,10 +46,10 @@ void Gameplay::init() {
 	//imagePieces[0].setOrigin(5, 5);
 
 	int arr[4][4] = {
-		{2, 5, 7, 9},
-		{1, 4, 8, 10},
-		{6, 0, 3, 11},
-		{13, 12, 14, 15}
+		{0, 1, 2, 3},
+		{4, 5, 6, 7},
+		{8, 9, 10, 11},
+		{12, 13, 15, 14}
 	};
 
 	int n = 0;
@@ -60,16 +60,19 @@ void Gameplay::init() {
 
 	for (int i = 0; i < puzzleSize; i++) {
 		for (int j = 0; j < puzzleSize; j++) {
-			imagePieces[n].setTexture(m_context->m_assets->getTexture(IMAGE_PUZZLE));
+			if (i == puzzleSize - 1 && j == puzzleSize - 1) {
+				continue;
+			}
+			else imagePieces[n].setTexture(m_context->m_assets->getTexture(IMAGE_PUZZLE));
 			imagePieces[n].setTextureRect(sf::IntRect(i * spriteSize, j * spriteSize, spriteSize, spriteSize));
 			imagePieces[n].setScale(scalingFactor, scalingFactor);
 			n++;
 		}
 	}
+
 	for (int i = 0; i < puzzleSize; i++) {
 
 		for (int j = 0; j < puzzleSize; j++) {
-
 			imagePieces[arr[i][j]].setPosition(i * spriteSize * scalingFactor + 125, j * spriteSize * scalingFactor + 125);
 
 		}
@@ -132,7 +135,7 @@ void Gameplay::draw() {
 
 	//std::cout << imagePieces[0].getOrigin().x;
 	
-	for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+	for (int i = 0; i < puzzleSize * puzzleSize ; i++) {
 		m_context->m_window->draw(imagePieces[i]);
 	}
 

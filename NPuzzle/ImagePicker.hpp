@@ -17,10 +17,10 @@
 
 
 
-class Gameplay : public Engine::State {
+class ImagePicker : public Engine::State {
 public:
-	Gameplay(std::shared_ptr<Context>& context, int _puzzleSize = 3);
-	~Gameplay();
+	ImagePicker(std::shared_ptr<Context>& context, int _puzzleSize = 3);
+	~ImagePicker();
 
 	void init() override;
 	void processInput() override;
@@ -32,12 +32,12 @@ private:
 	std::shared_ptr<Context> m_context;
 	sf::Text m_title;
 
-	
+	std::vector<std::string> imagePaths;
+	std::vector<sf::Text> imageSelectionTexts;
 
 	int puzzleSize;
+	int selectedImageIndex;
 
-
-
-
+	bool isReady;
 
 };
