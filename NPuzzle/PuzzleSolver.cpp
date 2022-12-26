@@ -35,7 +35,7 @@ int col[] = { 0, -1, 0, 1 };
 /// The main solving function.
 /// @param initialState  the state of the puzlle in which the algorithm starts from.
 /// @param finalState the state of the puzzle in which the user must match to win the game.
-void solve(PuzzleState & initialState, PuzzleState & finalState, PuzzleState * & result) {
+void solve(PuzzleState & initialState, PuzzleState & finalState, PuzzleState * & result, int emptySpace) {
     PriorityQueue<PuzzleState> priorityQueue;
     
     // calculate cost of the root node

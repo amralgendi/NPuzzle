@@ -25,7 +25,7 @@ int isSafe(int x, int y, int N);
 /// The main solving function.
 /// @param initialState  the state of the puzlle in which the algorithm starts from.
 /// @param finalState the state of the puzzle in which the user must match to win the game.
-void solve(PuzzleState & initialState, PuzzleState & finalState, PuzzleState*& result);
+void solve(PuzzleState & initialState, PuzzleState & finalState, PuzzleState*& result, int emptySpace);
 
 
 // MARK: - IsSolvable Utils

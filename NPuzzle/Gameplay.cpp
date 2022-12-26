@@ -117,39 +117,43 @@ int** getTestCase(int(&array)[N][N2]) {
 }
 
 bool currentlySolving = false;
-void solveYalla() {
+void Gameplay::solveYalla() {
 	currentlySolving = true;
 	const int N = 3;
 
 	int initialMat[N][N] = {
-		{1, 2, 3},
-		{4, 5, 6},
-		{0, 7, 8}
+		{0, 1, 2},
+		{3, 4, 5},
+		{6, 8, 7}
 	};
 
 	int finalMat[N][N] = {
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0}
+		{0, 1, 2},
+		{3, 4, 5},
+		{6, 7, 8}
 	};
 
 
-	int** dynamicFirstState = getTestCase(initialMat);
 	int** dynamicFinalState = getTestCase(finalMat);
 
-	PuzzleState* initialState = new PuzzleState(0, dynamicFirstState, N, 2, 0, 2, 0, 0);
-	PuzzleState* finalState = new PuzzleState(0, dynamicFinalState, N, 2, 2, 2, 2, -1);
+	int emptyX, emptyY;
 
+	FindEmptyLocation(puzzleState, N, emptyX, emptyY);
+
+	PuzzleState* initialState = new PuzzleState(0, puzzleState, N, emptyX, emptyY, emptyX, emptyY, 0);
+	PuzzleState* finalState = new PuzzleState(0, dynamicFinalState, N, puzzleSize - 1, puzzleSize - 1, puzzleSize - 1, puzzleSize - 1, -1);
 	PuzzleState* leafNode;
 
-	solve(*initialState, *finalState, leafNode);
-
+	solve(*initialState, *finalState, leafNode, puzzleSize * puzzleSize - 1);
+	
 	while (leafNode != 0) {
-		leafNode->printMatrix();
+		solvingStack.push(leafNode);
+		//leafNode->printMatrix();
 		leafNode = leafNode->parent;
 	}
+	currentlySolving = false;
+	doneSolving = true;
 }
-
 bool lock_click2;
 bool lock_click3;
 void Gameplay::processInput() {
@@ -208,9 +212,11 @@ void Gameplay::processInput() {
 		if (event.type == sf::Event::Closed)
 			m_context->m_window->close();
 
+		
+
 		if (currentlySolving) { return; }
 		if (event.type == sf::Event::KeyPressed) {
-			if (animationStarted) return;
+			if (animationStarted ) return;
 			int emptyX, emptyY;
 			FindEmptyLocation(puzzleState, puzzleSize, emptyX, emptyY);
 			std::cout << emptyX << ' ' << emptyY << "Check \n";
@@ -218,7 +224,6 @@ void Gameplay::processInput() {
 			{
 			case sf::Keyboard::Left: {
 				keyPressed = LEFT;
-
 				break;
 			}
 			case sf::Keyboard::Right: {
@@ -271,6 +276,37 @@ void Gameplay::update(sf::Time) {
 	float scalingFactor = 750.f / textureSize;
 
 	if (!animationStarted)
+		if (doneSolving) {
+			if (solvingStack.empty()) return;
+
+			PuzzleState* currState = solvingStack.top();
+			solvingStack.pop();
+			if (solvingStack.empty()) return;
+			PuzzleState* nextState = solvingStack.top();
+
+			int currX, currY, nextX, nextY;
+			FindEmptyLocation(currState->mat, puzzleSize, currX, currY);
+			FindEmptyLocation(nextState->mat, puzzleSize, nextX, nextY);
+
+			std::cout << currX << currY << ' ' << nextX << nextY;
+			if (currX != nextX || currY != nextY) animationStarted = true;
+			//else doneSolving = false;
+			if (currX < nextX) { keyPressed = UP; }
+			else if(currX > nextX){ keyPressed = DOWN; }//UP
+			else if (currY < nextY) keyPressed = LEFT;
+			else keyPressed = RIGHT;
+
+			imageIndexToMove = currState->mat[nextX][nextY];
+			int temp = puzzleState[currX][currY];
+			puzzleState[currX][currY] = nextState->mat[currX][currY];
+			puzzleState[nextX][nextY] = temp;
+
+
+			//doneSolving = false;
+
+
+		}
+		else
 		for (int i = 0; i < puzzleSize; i++) {
 
 			for (int j = 0; j < puzzleSize; j++) {

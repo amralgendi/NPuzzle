@@ -3,8 +3,9 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
-
+#include <stack>
 #include <vector>
+#include "PuzzleState.hpp"
 
 
 
@@ -32,11 +33,16 @@ public:
 
 
 
+
+
 private:
 
 
 	int X_MOVING[5] = { 0, 1, 0, -1, 0 } ;
 	int Y_MOVING[5] = { -1, 0, 1, 0, 0 } ;
+
+	void startSolveAnimation(stack<PuzzleState*>& st);
+
 
 	void FindLocationOf(int** state, int item, int size, int& x, int& y) {
 		for (int i = 0; i < size; i++) {
@@ -49,6 +55,8 @@ private:
 			}
 		}
 	}
+	void solveYalla();
+
 
 	void FindEmptyLocation(int** state, int size, int& x, int& y) {
 		return FindLocationOf(state, size * size - 1, size, x, y);
@@ -80,6 +88,9 @@ private:
 	int maxMove = -1;
 	float amountMoved = 0.f;
 	float animationSpeed = 3.f;
+	bool doneSolving = false;
+
+	std::stack<PuzzleState*> solvingStack ;
 
 
 };
